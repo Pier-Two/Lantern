@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <EnablePreviewFeatures>True</EnablePreviewFeatures>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\lib\Lantern.Beacon\lib\cortex\src\Cortex.Containers\Cortex.Containers.csproj" />
+      <ProjectReference Include="..\..\lib\Lantern.Beacon\lib\SszSharp\SszSharp\SszSharp.csproj" />
+      <ProjectReference Include="..\..\lib\Lantern.Beacon\src\Lantern.Beacon.Sync\Lantern.Beacon.Sync.csproj" />
+      <ProjectReference Include="..\..\lib\Lantern.Beacon\src\Lantern.Beacon\Lantern.Beacon.csproj" />
+    </ItemGroup>
+
+</Project>
