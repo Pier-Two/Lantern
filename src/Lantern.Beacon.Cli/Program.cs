@@ -136,15 +136,15 @@ internal static class Program
         System.Console.WriteLine("Options:");
         System.Console.WriteLine("  --network <type>                 Network type (e.g., mainnet, holesky)");
         System.Console.WriteLine("  --block-root <hex>               Trusted block root in hex format");
-        System.Console.WriteLine("  --datadir <path>                 Data directory path");
-        System.Console.WriteLine("  --peer-count <number>            Target number of peers to connect");
-        System.Console.WriteLine("  --discovery-peer-count <number>  Target nodes to find for discovery");
-        System.Console.WriteLine("  --dial-parallelism <number>      Maximum parallel dials");
-        System.Console.WriteLine("  --dial-timeout <seconds>         Dial timeout in seconds");
-        System.Console.WriteLine("  --tcp-port <port>                TCP port to use");
-        System.Console.WriteLine("  --gossip-sub-enabled <true|false> Enable or disable GossipSub");
-        System.Console.WriteLine("  --bootnodes <enr1> <enr2> ...    List of bootnode ENRs");
-        System.Console.WriteLine("  --enable-discovery <true|false>  Enable or disable discovery");
+        System.Console.WriteLine("  --datadir <path>                 Data directory path (Optional)");
+        System.Console.WriteLine("  --peer-count <number>            Target number of peers to connect (Optional)");
+        System.Console.WriteLine("  --discovery-peer-count <number>  Target nodes to find for discovery (Optional)");
+        System.Console.WriteLine("  --dial-parallelism <number>      Maximum parallel dials (Optional)");
+        System.Console.WriteLine("  --dial-timeout <seconds>         Dial timeout in seconds (Optional)");
+        System.Console.WriteLine("  --tcp-port <port>                TCP port to use (Optional)");
+        System.Console.WriteLine("  --gossip-sub-enabled <true|false> Enable or disable GossipSub (Optional)");
+        System.Console.WriteLine("  --bootnodes <libp2p-multiaddress1> <libp2p-multiaddress2> ...    List of bootnode Libp2p multiaddresses (Optional)");
+        System.Console.WriteLine("  --enable-discovery <true|false>  Enable or disable discovery (Optional)");
     }
 }
 

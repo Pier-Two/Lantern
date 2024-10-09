@@ -18,8 +18,8 @@ public class Arguments
 
     public int TargetPeerCount { get; set; } = 1;
     public int TargetNodesToFind { get; set; } = 100;
-    public int MaxParallelDials { get; set; } = 1;
-    public int DialTimeoutSeconds { get; set; } = 5;
+    public int MaxParallelDials { get; set; } = 10;
+    public int DialTimeoutSeconds { get; set; } = 10;
     public int TcpPort { get; set; } = 9001;
     public bool GossipSubEnabled { get; set; } = true;
     public List<string> Bootnodes { get; set; } = new();
