@@ -16,14 +16,25 @@ internal static class Program
     public static async Task Main(string[] args)
     {
         // Parse command-line arguments
-        Arguments arguments;
+        BeaconClientOptions beaconClientOptions;
+
         try
         {
-            arguments = Arguments.Parse(args);
+            beaconClientOptions = BeaconClientOptions.Parse(args);
+        
+            // Validate required arguments
+            EnsureRequiredArguments(args);
+        
         }
         catch (ArgumentException ex)
         {
             System.Console.WriteLine($"Error parsing arguments: {ex.Message}");
+            DisplayUsage();
+            return;
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"Error: {ex.Message}");
             DisplayUsage();
             return;
         }
@@ -38,44 +49,19 @@ internal static class Program
         };
 
         // Discv5 options
-        var bootstrapEnrs = new[]
+        var discoveryBootstrapEnrs = new[]
         {
             "enr:-Ku4QImhMc1z8yCiNJ1TyUxdcfNucje3BGwEHzodEZUan8PherEo4sF7pPHPSIB1NNuSg5fZy7qFsjmUKs2ea1Whi0EBh2F0dG5ldHOIAAAAAAAAAACEZXRoMpD1pf1CAAAAAP__________gmlkgnY0gmlwhBLf22SJc2VjcDI1NmsxoQOVphkDqal4QzPMksc5wnpuC3gvSC8AfbFOnZY_On34wIN1ZHCCIyg", 
             "enr:-Le4QPUXJS2BTORXxyx2Ia-9ae4YqA_JWX3ssj4E_J-3z1A-HmFGrU8BpvpqhNabayXeOZ2Nq_sbeDgtzMJpLLnXFgAChGV0aDKQtTA_KgEAAAAAIgEAAAAAAIJpZIJ2NIJpcISsaa0Zg2lwNpAkAIkHAAAAAPA8kv_-awoTiXNlY3AyNTZrMaEDHAD2JKYevx89W0CcFJFiskdcEzkH_Wdv9iW42qLK79ODdWRwgiMohHVkcDaCI4I"
         };
         var connectionOptions = new ConnectionOptions();
         var sessionOptions = SessionOptions.Default;
-        var tableOptions = new TableOptions(bootstrapEnrs);
+        var tableOptions = new TableOptions(discoveryBootstrapEnrs);
         var enr = new EnrBuilder()
             .WithIdentityScheme(sessionOptions.Verifier, sessionOptions.Signer)
             .WithEntry(EnrEntryKey.Id, new EntryId("v4"))
             .WithEntry(EnrEntryKey.Secp256K1, new EntrySecp256K1(sessionOptions.Signer.PublicKey));
         var discv5LoggerFactory = LoggerFactory.Create(builder => builder.SetMinimumLevel(LogLevel.None));
-
-        // Beacon client options
-        var beaconClientOptions = new BeaconClientOptions
-        {
-            TcpPort = arguments.TcpPort,
-            DialTimeoutSeconds = arguments.DialTimeoutSeconds,
-            MaxParallelDials = arguments.MaxParallelDials,
-            EnableDiscovery = arguments.EnableDiscovery,
-            GossipSubEnabled = arguments.GossipSubEnabled,
-            DataDirectoryPath = arguments.DataDirectoryPath,
-            TargetPeerCount = arguments.TargetPeerCount,
-            TargetNodesToFind = arguments.TargetNodesToFind,
-            Bootnodes = arguments.Bootnodes.ToArray()
-        };
-
-        // Sync protocol options
-        var syncProtocolOptions = new SyncProtocolOptions
-        {
-            Preset = SizePreset.MainnetPreset, 
-            GenesisValidatorsRoot = Convert.FromHexString("4b363db94e286120d76eb905340fdd4e54bfe9f06bf33ff6cf5ad27f511bfe95"),
-            GenesisTime = 1606824023,
-            TrustedBlockRoot = arguments.GetTrustedBlockRootBytes(),
-            Network = arguments.GetNetworkType()
-        };
-
         var loggerFactory = LoggerFactory.Create(builder =>
         {
             builder
@@ -105,7 +91,6 @@ internal static class Program
                     .WithLoggerFactory(discv5LoggerFactory);
             });
             beaconClientBuilder.WithBeaconClientOptions(beaconClientOptions);
-            beaconClientBuilder.WithSyncProtocolOptions(syncProtocolOptions);
             beaconClientBuilder.AddLibp2pProtocol(libp2PBuilder => libp2PBuilder);
             beaconClientBuilder.WithLoggerFactory(loggerFactory);
         });
@@ -129,22 +114,44 @@ internal static class Program
             System.Console.WriteLine("Beacon client stopped.");
         }
     }
+    
+    private static void EnsureRequiredArguments(string[] args)
+    {
+        var requiredArgs = new Dictionary<string, string>()
+        {
+            { "--network", "Network type (e.g., mainnet, holesky)" },
+            { "--genesis-time", "Genesis time in UNIX timestamp for slot 0" },
+            { "--genesis-validators-root", "Trusted genesis validators root in hex format" },
+            { "--preset", "Preset type (e.g., mainnet, holesky)" }
+        };
+
+        foreach (var requiredArg in requiredArgs)
+        {
+            if (!args.Any(arg => arg.StartsWith(requiredArg.Key, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new Exception($"Missing required argument: {requiredArg.Key} - {requiredArg.Value}");
+            }
+        }
+    }
 
     private static void DisplayUsage()
     {
         System.Console.WriteLine("Usage: Lantern.Beacon.Console [options]");
         System.Console.WriteLine("Options:");
         System.Console.WriteLine("  --network <type>                 Network type (e.g., mainnet, holesky)");
+        System.Console.WriteLine("  --genesis-time <timestamp>       Genesis time in UNIX timestamp for slot 0");
+        System.Console.WriteLine("  --genesis-validators-root <hex>  Trusted genesis validators root in hex format");
+        System.Console.WriteLine("  --preset <type>                  Preset type (e.g., mainnet, holesky)");
         System.Console.WriteLine("  --block-root <hex>               Trusted block root in hex format");
-        System.Console.WriteLine("  --datadir <path>                 Data directory path (Optional)");
-        System.Console.WriteLine("  --peer-count <number>            Target number of peers to connect (Optional)");
-        System.Console.WriteLine("  --discovery-peer-count <number>  Target nodes to find for discovery (Optional)");
-        System.Console.WriteLine("  --dial-parallelism <number>      Maximum parallel dials (Optional)");
-        System.Console.WriteLine("  --dial-timeout <seconds>         Dial timeout in seconds (Optional)");
-        System.Console.WriteLine("  --tcp-port <port>                TCP port to use (Optional)");
-        System.Console.WriteLine("  --gossip-sub-enabled <true|false> Enable or disable GossipSub (Optional)");
-        System.Console.WriteLine("  --bootnodes <libp2p-multiaddress1> <libp2p-multiaddress2> ...    List of bootnode Libp2p multiaddresses (Optional)");
-        System.Console.WriteLine("  --enable-discovery <true|false>  Enable or disable discovery (Optional)");
+        System.Console.WriteLine("  --datadir <path>                 Data directory path (OPTIONAL)");
+        System.Console.WriteLine("  --peer-count <number>            Target number of peers to connect (OPTIONAL)");
+        System.Console.WriteLine("  --discovery-peer-count <number>  Target nodes to find for discovery (OPTIONAL)");
+        System.Console.WriteLine("  --dial-parallelism <number>      Maximum parallel dials (OPTIONAL)");
+        System.Console.WriteLine("  --dial-timeout <seconds>         Dial timeout in seconds (OPTIONAL)");
+        System.Console.WriteLine("  --tcp-port <port>                TCP port to use (OPTIONAL)");
+        System.Console.WriteLine("  --gossip-sub-enabled <true|false> Enable or disable GossipSub (OPTIONAL)");
+        System.Console.WriteLine("  --bootnodes <libp2p-multiaddress1> <libp2p-multiaddress2> ...    List of bootnode Libp2p multiaddresses (OPTIONAL)");
+        System.Console.WriteLine("  --enable-discovery <bool>  Enable or disable discovery (OPTIONAL)");
     }
 }
 
