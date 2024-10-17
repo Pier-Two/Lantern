@@ -6,7 +6,7 @@ Lantern.Beacon.Cli is a console application that runs a fully peer-to-peer (P2P)
 
 Before you can build and run `Lantern.Beacon.Cli`, ensure that you have the following installed on your system:
 
-1. **.NET SDK (version 8.0 or higher)**  
+1. **.NET SDK (version 8.0)**  
    The project is built using .NET, so you will need the .NET SDK installed. You can download it from the official [.NET website](https://dotnet.microsoft.com/download).
 
    To verify that .NET is installed, run the following command:
