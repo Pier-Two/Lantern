@@ -22,25 +22,6 @@ Before you can build and run `Lantern.Beacon.Cli`, ensure that you have the foll
    git --version
    ```
 
-## Installation
-
-You can follow these steps to build and install this CLI tool:
-
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/Pier-Two/Lantern.Beacon.Cli.git --recursive
-    ```
-
-2. Navigate to the project root:
-    ```bash
-    cd Lantern.Beacon.Cli
-    ```
-
-3. Build the project using the .NET CLI:
-    ```bash
-    dotnet build
-    ```
-
 ## Build From Source
 
 To build this project from source, follow these detailed steps:
