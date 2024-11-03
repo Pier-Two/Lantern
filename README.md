@@ -62,10 +62,10 @@ To build this project from source, follow these detailed steps:
 
 ### Running the Beacon Client
 
-To run the `Lantern.Beacon.Cli`, you need to provide several required arguments such as the network type, genesis time, genesis validators root, and preset. Below is an example of how to run the client for the Ethereum mainnet:
+To run the CLI, you need to provide several required arguments such as the network type, genesis time, genesis validators root, and preset. Below is an example of how to run the client for the Ethereum mainnet:
 
 ```
-./Lantern.Beacon.Cli --network mainnet --genesis-time 1606824023 --genesis-validators-root 0x4b363db94e286120d76eb905340fdd4e54bfe9f06bf33ff6cf5ad27f511bfe95 --preset mainnet --block-root 0xb170fd52257200a0bc86f896ee9b688e9022f93e70810aa90e779a7bc1683a7f
+dotnet run -- --network mainnet --genesis-time 1606824023 --genesis-validators-root 0x4b363db94e286120d76eb905340fdd4e54bfe9f06bf33ff6cf5ad27f511bfe95 --preset mainnet --block-root 0xb170fd52257200a0bc86f896ee9b688e9022f93e70810aa90e779a7bc1683a7f
 ```
 
 ## Releases
