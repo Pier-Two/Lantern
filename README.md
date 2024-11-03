@@ -72,6 +72,7 @@ To build this project from source, follow these detailed steps:
 5. **Run the Application**  
    Once the build completes successfully, you can run the CLI using the following command:
    ```bash
+   cd src/Lantern.Beacon.Cli
    dotnet run -- <your-cli-arguments>
    ```
    Replace `<your-cli-arguments>` with the desired options for running the client (e.g. `--network mainnet`, etc.).
