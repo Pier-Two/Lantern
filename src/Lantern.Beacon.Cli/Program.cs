@@ -107,10 +107,10 @@ internal static class Program
         catch (OperationCanceledException)
         {
             // Graceful shutdown
+            await beaconClient.StopAsync();
         }
         finally
         {
-            await beaconClient.StopAsync();
             System.Console.WriteLine("Beacon client stopped.");
         }
     }
