@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Lantern.Beacon.Console;
+namespace Lantern.Beacon.Cli.Logging;
 
 public class CustomConsoleLogger(
     string name,
@@ -16,7 +16,7 @@ public class CustomConsoleLogger(
 
     public bool IsEnabled(LogLevel logLevel) => _filter(_config);
 
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception, string> formatter)
     {
         if (!IsEnabled(logLevel)) return;
 
@@ -25,14 +25,12 @@ public class CustomConsoleLogger(
             var timestamp = DateTime.UtcNow.ToString(_config.TimestampPrefix); 
             var logLevelString = GetLogLevelString(logLevel);
             var logMessage = RemoveCategoryAndId(formatter(state, exception));
-            System.Console.WriteLine($"{timestamp} [{logLevelString}] {logMessage}");
+            Console.WriteLine($"{timestamp} [{logLevelString}] {logMessage}");
         }
     }
 
     private static string RemoveCategoryAndId(string message)
     {
-        // Logic to remove the category and eventId from the message
-        // Assuming the category will be of the pattern 'Category[EventId]: message'
         var index = message.IndexOf(']');
         
         if (index != -1 && message.Length > index + 1)
@@ -43,9 +41,8 @@ public class CustomConsoleLogger(
         return message;
     }
     
-    private string GetLogLevelString(LogLevel logLevel)
+    private static string GetLogLevelString(LogLevel logLevel)
     {
-        // Convert log level to custom string representation
         return logLevel switch
         {
             LogLevel.Trace => "Trace",
