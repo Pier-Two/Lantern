@@ -64,7 +64,7 @@ internal static class Program
         {
             builder
                 .AddFilter("Nethermind.Libp2p.Core.ChannelFactory", LogLevel.None)
-                .SetMinimumLevel(beaconClientOptions.LogLevel)
+                .SetMinimumLevel(LogLevel.Information)
                 .AddProvider(new CustomConsoleLoggerProvider(
                     config => config.EventId == 0,
                     new CustomConsoleLogger.CustomConsoleLoggerConfiguration
