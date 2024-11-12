@@ -1,6 +1,6 @@
 # Lantern.Beacon.Cli
 
-Lantern.Beacon.Cli is a console application that runs a fully peer-to-peer (P2P) consensus light client for Ethereum.
+Lantern.Beacon.Cli is a console application that runs a fully peer-to-peer (P2P) consensus light client for Ethereum. This project is funded by the Ethereum Foundation to improve censorship resistance and decentralise access to Ethereum.
 
 ## Prerequisites
 
