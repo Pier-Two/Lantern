@@ -1,6 +1,6 @@
-# Lantern.Beacon.Cli
+# Lantern
 
-Lantern.Beacon.Cli is a console application that runs a fully peer-to-peer (P2P) consensus light client for Ethereum. This project has received funding from the Ethereum Foundation for improving censorship resistance and decentralising access to Ethereum.
+Lantern is a console application that runs a fully peer-to-peer (P2P) consensus light client for Ethereum. This project has received funding from the Ethereum Foundation for improving censorship resistance and decentralising access to Ethereum.
 
 ## Prerequisites
 
@@ -34,7 +34,7 @@ To build this project from source, follow these detailed steps:
 2. **Clone the Repository**  
    Start by cloning the repository into a local directory:  
    ```bash
-   git clone https://github.com/Pier-Two/Lantern.Beacon.Cli.git --recursive
+   git clone https://github.com/Pier-Two/Lantern.git --recursive
    ```
 
 3. **Navigate to Source Directory**  
