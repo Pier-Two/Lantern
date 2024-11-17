@@ -1,6 +1,6 @@
 # Lantern
 
-Lantern is a console application that runs a fully peer-to-peer (P2P) consensus light client for Ethereum. This project has received funding from the Ethereum Foundation for improving censorship resistance and decentralising access to Ethereum.
+Lantern is a light client for Ethereum that can track consensus in a fully peer-to-peer manner. This project has received funding from the Ethereum Foundation for improving censorship resistance and decentralising access to Ethereum.
 
 ## Prerequisites
 
