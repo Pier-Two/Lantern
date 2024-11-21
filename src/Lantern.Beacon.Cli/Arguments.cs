@@ -1,3 +1,4 @@
+using Lantern.Beacon.Cli.Networks;
 using Lantern.Beacon.Sync.Types;
 using Microsoft.Extensions.Logging;
 using SszSharp;
@@ -10,23 +11,59 @@ public static class Arguments
     {
         var argsList = args.ToList();
         var options = new BeaconClientOptions();
-    
+        var networkType = NetworkType.Mainnet;
+        
         for (var i = 0; i < argsList.Count; i++)
         {
             var arg = argsList[i].ToLowerInvariant();
-            
+
+            if (arg != "--network")
+                continue;
+
+            if (i + 1 < argsList.Count)
+            {
+                networkType = GetNetworkType(argsList[++i]);
+                options.SyncProtocolOptions.Network = networkType;
+                
+                switch (networkType)
+                {
+                    case NetworkType.Mainnet:
+                        options.SyncProtocolOptions.GenesisTime = MainnetConfig.GenesisTime;
+                        options.SyncProtocolOptions.GenesisValidatorsRoot = MainnetConfig.GenesisValidatorsRoot;
+                        options.SyncProtocolOptions.Preset = MainnetConfig.Preset;
+                        break;
+
+                    case NetworkType.Holesky:
+                        options.SyncProtocolOptions.GenesisTime = HoleskyConfig.GenesisTime;
+                        options.SyncProtocolOptions.GenesisValidatorsRoot = HoleskyConfig.GenesisValidatorsRoot;
+                        options.SyncProtocolOptions.Preset = HoleskyConfig.Preset;
+                        break;
+
+                    case NetworkType.Custom:
+                        // For custom network, the user must provide genesis-time, genesis-validators-root, and preset
+                        break;
+
+                    default:
+                        throw new ArgumentException($"Unsupported network type: {networkType}");
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Missing value for --network");
+            }
+            break;
+        }
+        
+        for (var i = 0; i < argsList.Count; i++)
+        {
+            var arg = argsList[i].ToLowerInvariant();
+
             switch (arg)
             {
                 case "--network":
-                    if (i + 1 < argsList.Count)
-                    {
-                        options.SyncProtocolOptions.Network = GetNetworkType(argsList[++i]);
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Missing value for --network");
-                    }
+                    i++;
                     break;
+
                 case "--log-level":
                     if (i + 1 < args.Length)
                     {
@@ -45,7 +82,12 @@ public static class Arguments
                         throw new ArgumentException("Missing value for --log-level");
                     }
                     break;
+
                 case "--genesis-time":
+                    if (networkType != NetworkType.Custom)
+                    {
+                        throw new ArgumentException("--genesis-time can only be used with --network custom");
+                    }
                     if (i + 1 < argsList.Count && ulong.TryParse(argsList[++i], out var genesisTime))
                     {
                         options.SyncProtocolOptions.GenesisTime = genesisTime;
@@ -55,8 +97,12 @@ public static class Arguments
                         throw new ArgumentException("Invalid or missing value for --genesis-time");
                     }
                     break;
-                
+
                 case "--genesis-validators-root":
+                    if (networkType != NetworkType.Custom)
+                    {
+                        throw new ArgumentException("--genesis-validators-root can only be used with --network custom");
+                    }
                     if (i + 1 < argsList.Count)
                     {
                         options.SyncProtocolOptions.GenesisValidatorsRoot = GetTrustedBlockRootBytes(argsList[++i]);
@@ -66,8 +112,12 @@ public static class Arguments
                         throw new ArgumentException("Missing value for --genesis-validators-root");
                     }
                     break;
-                
+
                 case "--preset":
+                    if (networkType != NetworkType.Custom)
+                    {
+                        throw new ArgumentException("--preset can only be used with --network custom");
+                    }
                     if (i + 1 < argsList.Count)
                     {
                         options.SyncProtocolOptions.Preset = GetPreset(argsList[++i]);
@@ -155,7 +205,7 @@ public static class Arguments
                         throw new ArgumentException("Invalid or missing value for --tcp-port");
                     }
                     break;
-                
+
                 case "--http-port":
                     if (i + 1 < argsList.Count && int.TryParse(argsList[++i], out var httpPort))
                     {
@@ -163,7 +213,7 @@ public static class Arguments
                     }
                     else
                     {
-                        throw new ArgumentException("Invalid or missing value for --tcp-port");
+                        throw new ArgumentException("Invalid or missing value for --http-port");
                     }
                     break;
 
@@ -184,7 +234,7 @@ public static class Arguments
                         options.Bootnodes.Add(argsList[++i]);
                     }
                     break;
-                
+
                 case "--enable-discovery":
                     if (i + 1 < argsList.Count && bool.TryParse(argsList[++i], out var enableDiscovery))
                     {
@@ -203,36 +253,38 @@ public static class Arguments
 
         return options;
     }
-    
+
     private static SizePreset GetPreset(string preset)
     {
         return preset.ToLower() switch
         {
-            "mainnet" => SizePreset.MainnetPreset,
-            "holesky" => SizePreset.MainnetPreset,
+            "mainnet" => MainnetConfig.Preset,
+            "holesky" => HoleskyConfig.Preset,
+            "custom" => SizePreset.MinimalPreset,
             _ => throw new ArgumentException($"Unsupported preset: {preset}")
         };
     }
-    
+
     private static NetworkType GetNetworkType(string network)
     {
         return network.ToLower() switch
         {
-            "mainnet" => NetworkType.Mainnet,
-            "holesky" => NetworkType.Holesky,
+            "mainnet" => MainnetConfig.NetworkType,
+            "holesky" => HoleskyConfig.NetworkType,
+            "custom" => NetworkType.Custom,
             _ => throw new ArgumentException($"Unsupported network type: {network}")
         };
     }
-    
+
     private static byte[] GetTrustedBlockRootBytes(string trustedBlockRoot)
     {
         try
         {
-            if(trustedBlockRoot.StartsWith("0x"))
+            if (trustedBlockRoot.StartsWith("0x"))
             {
                 trustedBlockRoot = trustedBlockRoot[2..];
             }
-            
+
             return Convert.FromHexString(trustedBlockRoot);
         }
         catch (FormatException)

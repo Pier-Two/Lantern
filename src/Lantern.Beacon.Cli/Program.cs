@@ -2,6 +2,7 @@
 using Lantern.Beacon.Sync;
 using Lantern.Discv5.Enr;
 using Lantern.Discv5.Enr.Entries;
+using Lantern.Discv5.Enr.Identity.V4;
 using Lantern.Discv5.WireProtocol.Connection;
 using Lantern.Discv5.WireProtocol.Session;
 using Lantern.Discv5.WireProtocol.Table;
@@ -53,7 +54,13 @@ internal static class Program
             "enr:-Le4QPUXJS2BTORXxyx2Ia-9ae4YqA_JWX3ssj4E_J-3z1A-HmFGrU8BpvpqhNabayXeOZ2Nq_sbeDgtzMJpLLnXFgAChGV0aDKQtTA_KgEAAAAAIgEAAAAAAIJpZIJ2NIJpcISsaa0Zg2lwNpAkAIkHAAAAAPA8kv_-awoTiXNlY3AyNTZrMaEDHAD2JKYevx89W0CcFJFiskdcEzkH_Wdv9iW42qLK79ODdWRwgiMohHVkcDaCI4I"
         };
         var connectionOptions = new ConnectionOptions();
-        var sessionOptions = SessionOptions.Default;
+        var sessionKeys = new SessionKeys(beaconClientOptions.Identity.PrivateKey.Data.ToByteArray());
+        var sessionOptions = new SessionOptions
+        {
+            SessionKeys = sessionKeys,
+            Signer = new IdentitySignerV4(sessionKeys.PrivateKey),
+            Verifier = new IdentityVerifierV4()
+        };
         var tableOptions = new TableOptions(discoveryBootnodes);
         var enr = new EnrBuilder()
             .WithIdentityScheme(sessionOptions.Verifier, sessionOptions.Signer)

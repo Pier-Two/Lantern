@@ -7,9 +7,6 @@ public static class Utilities
         var requiredArgs = new Dictionary<string, string>
         {
             { "--network", "Specifies the network type (e.g., mainnet, holesky)." },
-            { "--genesis-time", "Sets the genesis time as a UNIX timestamp for slot 0." },
-            { "--genesis-validators-root", "Trusted genesis validators root in hex format." },
-            { "--preset", "Chooses the preset type (e.g., mainnet, holesky)." },
             { "--block-root", "Trusted Beacon block root in hex format" }
         };
 
@@ -25,9 +22,9 @@ public static class Utilities
         var options = new List<(string Option, string Description)>
         {
             ("--network <type>", "Specifies the network type (e.g., mainnet, holesky)."),
-            ("--genesis-time <timestamp>", "Sets the genesis time as a UNIX timestamp for slot 0."),
-            ("--genesis-validators-root <hex>", "Defines the trusted genesis validators root in hexadecimal format."),
-            ("--preset <type>", "Sets the preset type (e.g., mainnet, holesky)."),
+            ("--genesis-time <timestamp>", "Sets the genesis time as a UNIX timestamp for slot 0. (Optional)"),
+            ("--genesis-validators-root <hex>", "Defines the trusted genesis validators root in hexadecimal format. (Optional)"),
+            ("--preset <type>", "Sets the preset type (e.g., mainnet, holesky). (Optional)"),
             ("--block-root <hex>", "Sets the trusted Beacon block root in hexadecimal format."),
             ("--datadir <path>", "Specifies the data directory path. (Optional)"),
             ("--peer-count <number>", "Sets the target number of peer connections for the client. (Optional)"),
