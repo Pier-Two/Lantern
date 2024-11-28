@@ -1,6 +1,6 @@
 # Lantern
 
-Lantern is a light client for Ethereum that can track its Proof of Stake consensus in a fully peer-to-peer manner. This project has received funding from the Ethereum Foundation for improving censorship resistance and decentralising access to Ethereum.
+Lantern is a light client for Ethereum that can track its Proof of Stake consensus in a fully peer-to-peer manner. 
 
 ## Prerequisites
 
